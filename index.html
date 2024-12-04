@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0d0b21;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            background-color: #222;
+            padding: 20px;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .tab {
+            padding: 10px;
+            margin: 5px;
+            background-color: #444;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .tab.active {
+            background-color: #007BFF;
+        }
+        .container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .friend-list, .add-friends {
+            display: none;
+        }
+        .active-tab-content {
+            display: block;
+        }
+        .friend-card {
+            background-color: #333;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            color: white;
+            display: inline-block;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #call-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Friends App</h1>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="friends">Friends</div>
+        <div class="tab" data-tab="add-friends">Add Friend</div>
+    </div>
+
+    <div class="container">
+        <div id="friends" class="friend-list active-tab-content">
+            <h2>Your Friends</h2>
+            <div id="friend-list"></div>
+            <div id="call-section">
+                <button id="audio-call">Start Audio Call</button>
+                <button id="share-screen">Share Screen</button>
+            </div>
+        </div>
+
+        <div id="add-friends" class="add-friends active-tab-content">
+            <h2>Add a Friend</h2>
+            <input type="text" id="friend-name" placeholder="Friend's username">
+            <button id="add-friend">Add Friend</button>
+        </div>
+
+        <div id="auth">
+            <h2>Enter your username</h2>
+            <input type="text" id="username" placeholder="Enter your username">
+            <button id="login">Log In</button>
+        </div>
+    </div>
+
+    <script>
+        let username = localStorage.getItem("username"); // Получаем сохранённое имя пользователя
+        const authSection = document.getElementById("auth");
+        const friendList = document.getElementById("friend-list");
+        const tabs = document.querySelectorAll(".tab");
+        const addFriendButton = document.getElementById("add-friend");
+        const friendNameInput = document.getElementById("friend-name");
+        const userNameSpan = document.getElementById("user-name");
+        const loginButton = document.getElementById("login");
+
+        // Проверяем, если пользователь уже авторизован
+        if (username) {
+            authSection.style.display = "none"; // Прячем форму авторизации
+            document.getElementById("friends").style.display = "block"; // Показываем список друзей
+            userNameSpan = document.getElementById("user-name");
+            userNameSpan.textContent = username;
+        }
+
+        // Смена вкладок
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                document.querySelector(".tab.active").classList.remove("active");
+                tab.classList.add("active");
+
+                const activeTab = tab.getAttribute("data-tab");
+                document.querySelector(".active-tab-content").classList.remove("active-tab-content");
+                document.getElementById(activeTab).classList.add("active-tab-content");
+            });
+        });
+
+        // Логика входа
+        loginButton.addEventListener("click", () => {
+            const enteredUsername = document.getElementById("username").value;
+            if (enteredUsername) {
+                username = enteredUsername;
+                localStorage.setItem("username", username); // Сохраняем имя в localStorage
+                authSection.style.display = "none";
+                document.getElementById("friends").style.display = "block";
+                userNameSpan.textContent = username;
+            }
+        });
+
+        // Добавление друга
+        addFriendButton.addEventListener("click", () => {
+            const friendName = friendNameInput.value;
+            if (friendName) {
+                const friendCard = document.createElement("div");
+                friendCard.className = "friend-card";
+                friendCard.innerHTML = `
+                    <p>${friendName}</p>
+                    <button class="message-button">Message</button>
+                    <button class="call-button">Call</button>
+                `;
+                friendList.appendChild(friendCard);
+                friendNameInput.value = ""; // Очистить поле ввода
+            }
+        });
+
+        // Аудио звонок и трансляция экрана
+        document.getElementById("audio-call").addEventListener("click", () => {
+            alert("Starting Audio Call (To be implemented with WebRTC)");
+        });
+
+        document.getElementById("share-screen").addEventListener("click", () => {
+            alert("Starting Screen Share (To be implemented with WebRTC)");
+        });
+    </script>
+
+</body>
+</html>
